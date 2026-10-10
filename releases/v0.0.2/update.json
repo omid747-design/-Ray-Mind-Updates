@@ -1,0 +1,9 @@
+{
+  "packageName": "com.raymind.app",
+  "version": "0.0.2",
+  "versionCode": 2,
+  "minSdk": 26,
+  "sha256": "663886b3eba9a4a0cd83e6221cb9ea860f80790074738513c562db58eef3e1be",
+  "signerSha256": "3f4ab95afe7e909d5b4c9fa4f45d804fb5dd4bcb505e08265842a9009ff5dcb0",
+  "downloadUrl": "https://github.com/omid747-design/-Ray-Mind-Updates/releases/download/v0.0.2/Ray-Mind-0.0.2-debug.apk"
+}

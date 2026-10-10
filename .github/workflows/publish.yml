@@ -1,0 +1,38 @@
+name: Publish APK update
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: write
+concurrency:
+  group: publish-apk
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Verify and publish APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RAY_TAG: ${{ github.ref_name }}
+        run: |
+          [[ "$RAY_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          cd "releases/$RAY_TAG"
+          sha256sum --check SHA256SUMS
+          gh release create "$RAY_TAG" "Ray-Mind-${RAY_TAG#v}-debug.apk" SHA256SUMS update.json \
+            --verify-tag --title "Ray Mind ${RAY_TAG#v} MVP" --notes-file RELEASE-NOTES.md
+      - name: Activate published update feed
+        env:
+          RAY_TAG: ${{ github.ref_name }}
+        run: |
+          cp "releases/$RAY_TAG/update.json" /tmp/raymind-update.json
+          git fetch origin main
+          git checkout -B main origin/main
+          cp /tmp/raymind-update.json update.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add update.json
+          git commit -m "Activate $RAY_TAG APK update feed"
+          git push origin main
